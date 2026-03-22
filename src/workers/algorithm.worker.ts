@@ -1,42 +1,40 @@
 import { AlgorithmResult } from '../types/AlgorithmState';
+import { DataPattern, runAlgorithm } from '../utils/algorithmRunner';
 
 export type WorkerMessageRequest = {
   algorithmId: string;
-  payload: any;
+  payload: {
+    size?: number;
+    pattern?: DataPattern;
+  };
 };
 
 export type WorkerMessageResponse = {
   success: boolean;
-  result?: AlgorithmResult<any>;
+  result?: AlgorithmResult<unknown>;
   error?: string;
 };
 
-// In Vite, a worker needs to be imported with ?worker
-self.addEventListener('message', async (e: MessageEvent<WorkerMessageRequest>) => {
-  const { algorithmId, payload } = e.data;
-  
+self.addEventListener('message', (event: MessageEvent<WorkerMessageRequest>) => {
+  const { algorithmId, payload } = event.data;
+
   try {
-    // In a real implementation, we would route to the correct algorithm generator here.
-    // For now, this is a placeholder standard response structure.
-    
-    // Simulate some work
-    // const states = runAlgorithm(payload);
-    
-    // Send back success
+    const result = runAlgorithm(algorithmId, {
+      size: payload.size ?? 8,
+      pattern: payload.pattern ?? 'random',
+    });
+
     self.postMessage({
       success: true,
-      result: {
-        states: [],
-        timeComplexity: 'O(N)',
-        spaceComplexity: 'O(1)',
-        executionTimeMs: 0
-      }
+      result,
     } as WorkerMessageResponse);
-  } catch (err: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Worker computation failed';
     self.postMessage({
       success: false,
-      error: err.message || 'Worker computation threw an unknown error'
+      error: message,
     } as WorkerMessageResponse);
   }
 });
+
 export {};

@@ -1,7 +1,7 @@
 import { AlgorithmResult, AlgorithmState, OperationType } from '../../types/AlgorithmState';
 import { buildPathFromPrev, formatDistances, generateRandomGraph, GraphData } from './shared';
 
-export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResult<GraphData> => {
+export const generateBellmanFordStates = (source = 0, nodeCount = 6): AlgorithmResult<GraphData> => {
   const { nodes, edges } = generateRandomGraph(nodeCount);
   const distances = Array(nodes.length).fill(Infinity);
   const visited = Array(nodes.length).fill(false);
@@ -17,11 +17,12 @@ export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResu
     current: number | null,
     activeIndices: number[],
     message: string,
+    pass: number,
     path: number[] = []
   ) => {
     states.push({
       data: {
-        algorithm: 'dijkstra',
+        algorithm: 'bellman-ford',
         nodes: [...nodes],
         edges: [...edges],
         distances: [...distances],
@@ -30,6 +31,7 @@ export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResu
         path: [...path],
         source,
         target,
+        pass,
       },
       activeIndices,
       operationType,
@@ -37,6 +39,7 @@ export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResu
         stepNumber: step++,
         message,
         variables: {
+          pass,
           distances: formatDistances(nodes, distances),
         },
       },
@@ -47,53 +50,63 @@ export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResu
     OperationType.VISIT,
     source,
     [source],
-    `Starting Dijkstra from ${nodes[source].label}. The source begins at distance 0 while all other nodes start at infinity.`
+    `Starting Bellman-Ford from ${nodes[source].label}. We will relax every edge up to V-1 times.`,
+    0
   );
 
-  for (let count = 0; count < nodes.length; count++) {
-    let current = -1;
-    for (let node = 0; node < nodes.length; node++) {
-      if (!visited[node] && (current === -1 || distances[node] < distances[current])) {
-        current = node;
-      }
-    }
-
-    if (current === -1 || distances[current] === Infinity) {
-      break;
-    }
-
+  for (let pass = 1; pass < nodes.length; pass++) {
+    let changed = false;
     record(
       OperationType.VISIT,
-      current,
-      [current],
-      `${nodes[current].label} has the smallest tentative distance, so it becomes the next settled node.`
+      null,
+      [],
+      `Pass ${pass}: scan every edge and improve any distance that can be shortened.`,
+      pass
     );
 
-    visited[current] = true;
-
     for (const edge of edges) {
-      if (edge.from !== current || visited[edge.to]) {
+      if (distances[edge.from] === Infinity) {
         continue;
       }
 
-      const candidate = distances[current] + edge.weight;
+      const candidate = distances[edge.from] + edge.weight;
       record(
         OperationType.COMPARE,
-        current,
-        [current, edge.to],
-        `Relax edge ${nodes[current].label} -> ${nodes[edge.to].label}. Candidate distance is ${candidate}.`
+        edge.from,
+        [edge.from, edge.to],
+        `Checking ${nodes[edge.from].label} -> ${nodes[edge.to].label}. Candidate distance is ${candidate}.`,
+        pass
       );
 
       if (candidate < distances[edge.to]) {
         distances[edge.to] = candidate;
-        prev[edge.to] = current;
+        prev[edge.to] = edge.from;
+        visited[edge.to] = true;
+        changed = true;
         record(
           OperationType.OVERWRITE,
           edge.to,
           [edge.to],
-          `${nodes[edge.to].label} receives a shorter path through ${nodes[current].label}, so its distance is updated to ${candidate}.`
+          `Distance to ${nodes[edge.to].label} improved to ${candidate} through ${nodes[edge.from].label}.`,
+          pass
         );
       }
+    }
+
+    if (!changed) {
+      record(
+        OperationType.DONE,
+        null,
+        [],
+        `No updates happened in pass ${pass}, so the shortest paths are already finalized.`,
+        pass,
+        buildPathFromPrev(prev, target)
+      );
+      return {
+        states,
+        timeComplexity: 'O(VE)',
+        spaceComplexity: 'O(V)',
+      };
     }
   }
 
@@ -102,13 +115,14 @@ export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResu
     OperationType.DONE,
     null,
     [],
-    `Dijkstra complete. Best path to ${nodes[target].label}: ${path.map((index) => nodes[index].label).join(' -> ')}.`,
+    `Bellman-Ford complete. Best path to ${nodes[target].label}: ${path.map((index) => nodes[index].label).join(' -> ')}.`,
+    nodes.length - 1,
     path
   );
 
   return {
     states,
-    timeComplexity: 'O(V²) naive, O((V+E) log V) with priority queue',
+    timeComplexity: 'O(VE)',
     spaceComplexity: 'O(V)',
   };
 };

@@ -1,73 +1,71 @@
-# React + TypeScript + Vite
+# AlgoVision
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AlgoVision is an interactive algorithm visualizer built with React, TypeScript, Vite, Framer Motion, and Zustand. It focuses on helping learners understand how algorithms evolve step by step through synchronized visual states, explanations, metrics, and code highlighting.
 
-Currently, two official plugins are available:
+## What It Includes
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Sorting visualizations for Quick Sort, Merge Sort, Bubble Sort, Selection Sort, and Heap Sort
+- Graph visualizations for Dijkstra, Bellman-Ford, and Breadth-First Search
+- Dynamic programming visualizations for Fibonacci DP, 0/1 Knapsack, and Longest Common Subsequence
+- String algorithm visualizations for KMP and Rabin-Karp
+- Single-run playback controls with timeline scrubbing and speed control
+- Comparison mode for side-by-side sorting runs on the same input
+- Live analytics for comparisons, swaps, visits, writes, and complexity summaries
+- Input-size analytics chart showing how operations scale
+- Step explanations with "why this step matters" reasoning
+- Collapsible code-sync panel with live line highlighting
 
-## React Compiler
+## Recent Upgrade Summary
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+This upgrade completed the remaining platform tasks by adding:
 
-## Expanding the ESLint configuration
+- Bellman-Ford, BFS, 0/1 Knapsack, LCS, and Rabin-Karp
+- A finished comparison mode with shared playback, live metrics, and winner detection
+- A performance analytics panel with operation counters and size-vs-operations charting
+- A reusable algorithm catalog for descriptions, complexity info, and code snippets
+- A code-sync panel and deeper explanation panel
+- Shared runner/worker plumbing for consistent algorithm generation
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Tech Stack
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- React 19
+- TypeScript
+- Vite
+- Tailwind CSS
+- Framer Motion
+- Zustand
+- React Router
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Running Locally
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Verification
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
+npm run lint
 ```
+
+Both commands pass with the current codebase.
+
+## Project Structure
+
+```text
+src/
+  algorithms/      algorithm state generators
+  components/      layout, UI, and visualization components
+  data/            algorithm catalog and shared metadata
+  hooks/           worker integration hooks
+  pages/           landing page and dashboard
+  store/           zustand stores for execution and comparison
+  utils/           shared runners and metrics helpers
+  workers/         algorithm worker entry point
+```
+
+## Goal
+
+The project is designed to make algorithm behavior easier to see, compare, and reason about instead of treating execution as a black box.

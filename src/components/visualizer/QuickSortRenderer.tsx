@@ -32,7 +32,7 @@ export const QuickSortRenderer = React.memo(() => {
 
   if (!state || !state.data || !(state.data as QuickSortTreeData).rows) return null;
 
-  const { rows, currentRowIdx } = state.data as QuickSortTreeData;
+  const { rows } = state.data as QuickSortTreeData;
   const { operationType } = state;
   const msg = state.metadata?.message || '';
 

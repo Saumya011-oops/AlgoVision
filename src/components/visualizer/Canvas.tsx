@@ -1,34 +1,40 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { QuickSortRenderer } from './QuickSortRenderer';
-import { MergeSortRenderer } from './MergeSortRenderer';
-import { GraphRenderer } from './GraphRenderer';
 import { DPTableRenderer } from './DPTableRenderer';
+import { GraphRenderer } from './GraphRenderer';
 import { KMPRenderer } from './KMPRenderer';
+import { MergeSortRenderer } from './MergeSortRenderer';
+import { QuickSortRenderer } from './QuickSortRenderer';
+import { SortingRenderer } from './SortingRenderer';
+
+const genericSortingAlgorithms = ['bubble-sort', 'selection-sort', 'heap-sort'];
+const graphAlgorithms = ['dijkstra', 'bellman-ford', 'bfs'];
+const dynamicProgrammingAlgorithms = ['fibonacci-dp', 'knapsack-01', 'lcs'];
+const stringAlgorithms = ['kmp', 'rabin-karp'];
 
 export const Canvas = React.memo(() => {
   const [searchParams] = useSearchParams();
-  const algoId = searchParams.get('algo') || 'quick-sort';
+  const algorithmId = searchParams.get('algo') || 'quick-sort';
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-background rounded-xl border border-surface shadow-inner relative overflow-hidden">
-      {/* Grid Background */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
-      
-      {/* Renderer Router */}
-      <div className="relative z-10 w-full h-full">
-        {algoId === 'quick-sort' ? (
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl border border-surface bg-background shadow-inner">
+      <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]" />
+
+      <div className="relative z-10 h-full w-full">
+        {algorithmId === 'quick-sort' ? (
           <QuickSortRenderer />
-        ) : algoId === 'merge-sort' ? (
+        ) : algorithmId === 'merge-sort' ? (
           <MergeSortRenderer />
-        ) : algoId === 'dijkstra' || algoId === 'a-star' ? (
+        ) : genericSortingAlgorithms.includes(algorithmId) ? (
+          <SortingRenderer />
+        ) : graphAlgorithms.includes(algorithmId) ? (
           <GraphRenderer />
-        ) : algoId === 'fibonacci-dp' ? (
+        ) : dynamicProgrammingAlgorithms.includes(algorithmId) ? (
           <DPTableRenderer />
-        ) : algoId === 'kmp' ? (
+        ) : stringAlgorithms.includes(algorithmId) ? (
           <KMPRenderer />
         ) : (
-          <div className="p-8 text-center text-text-secondary h-full flex items-center justify-center">
+          <div className="flex h-full items-center justify-center p-8 text-center text-text-secondary">
             Select an algorithm to begin visualization.
           </div>
         )}
@@ -36,4 +42,5 @@ export const Canvas = React.memo(() => {
     </div>
   );
 });
+
 Canvas.displayName = 'Canvas';

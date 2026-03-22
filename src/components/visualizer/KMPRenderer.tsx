@@ -1,106 +1,142 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import clsx from 'clsx';
 import { useExecutionStore } from '../../store/executionStore';
 import { OperationType } from '../../types/AlgorithmState';
-import clsx from 'clsx';
 
-interface KMPData { text: string; pattern: string; textIndex: number; patternIndex: number; lps: number[]; matches: number[]; }
+interface StringSearchData {
+  text: string;
+  pattern: string;
+  textIndex: number;
+  patternIndex: number;
+  lps?: number[];
+  matches: number[];
+  windowStart?: number;
+  windowEnd?: number;
+  patternHash?: number;
+  windowHash?: number;
+}
 
 export const KMPRenderer = React.memo(() => {
   const { getCurrentState } = useExecutionStore();
   const state = getCurrentState();
 
-  if (!state || !state.data || !(state.data as KMPData).text) return null;
+  if (!state || !state.data || !(state.data as StringSearchData).text) {
+    return null;
+  }
 
-  const { text, pattern, textIndex, patternIndex, lps, matches } = state.data as KMPData;
+  const { text, pattern, textIndex, patternIndex, lps, matches, windowStart, windowEnd, patternHash, windowHash } =
+    state.data as StringSearchData;
   const { operationType } = state;
-
-  // Calculate alignment offset so pattern aligns correctly
-  const patternOffset = Math.max(0, textIndex - patternIndex);
+  const patternOffset =
+    typeof windowStart === 'number' ? windowStart : Math.max(0, textIndex - Math.max(patternIndex, 0));
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center p-6 gap-8 overflow-auto">
-      {/* Text Row */}
+    <div className="flex h-full w-full flex-col items-center justify-center gap-8 overflow-auto p-6">
       <div>
-        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Text</h4>
-        <div className="flex gap-[2px] flex-wrap">
-          {text.split('').map((ch, i) => {
-            const isMatch = matches.includes(i);
-            const isActive = i === textIndex;
-            const isInMatchRange = matches.some(m => i >= m && i < m + pattern.length);
+        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-secondary">Text</h4>
+        <div className="flex flex-wrap gap-[2px]">
+          {text.split('').map((character, index) => {
+            const isActive = index === textIndex;
+            const isInWindow =
+              typeof windowStart === 'number' &&
+              typeof windowEnd === 'number' &&
+              index >= windowStart &&
+              index <= windowEnd;
+            const isMatchRange = matches.some(
+              (matchIndex) => index >= matchIndex && index < matchIndex + pattern.length
+            );
 
             return (
               <motion.div
-                key={`t-${i}`}
+                key={`text-${index}`}
                 animate={{ scale: isActive ? 1.15 : 1 }}
                 className={clsx(
-                  "w-8 h-10 flex items-center justify-center rounded-md font-mono font-bold text-sm border transition-all",
+                  'flex h-10 w-8 items-center justify-center rounded-md border font-mono text-sm font-bold transition-all',
                   isActive && operationType === OperationType.COMPARE
-                    ? "bg-yellow-500/20 border-yellow-400 text-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.4)]"
-                    : isInMatchRange
-                    ? "bg-green-500/20 border-green-400 text-green-300"
-                    : "bg-surface/40 border-surface text-white/80"
+                    ? 'border-yellow-400 bg-yellow-500/20 text-yellow-300 shadow-[0_0_12px_rgba(250,204,21,0.4)]'
+                    : isMatchRange
+                    ? 'border-green-400 bg-green-500/20 text-green-300'
+                    : isInWindow
+                    ? 'border-cyan-400/70 bg-cyan-500/10 text-cyan-100'
+                    : 'border-surface bg-surface/40 text-white/80'
                 )}
               >
-                {ch}
+                {character}
               </motion.div>
             );
           })}
         </div>
-        <div className="flex gap-[2px] mt-1 flex-wrap">
-          {text.split('').map((_, i) => (
-            <div key={`ti-${i}`} className="w-8 text-center text-[9px] font-mono text-text-secondary/50">{i}</div>
-          ))}
-        </div>
-      </div>
-
-      {/* Pattern Row (aligned) */}
-      <div>
-        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">Pattern (offset: {patternOffset})</h4>
-        <div className="flex gap-[2px] flex-wrap">
-          {/* Spacer */}
-          {Array.from({ length: Math.min(patternOffset, text.length) }).map((_, i) => (
-            <div key={`spacer-${i}`} className="w-8 h-10" />
-          ))}
-          {pattern.split('').map((ch, i) => {
-            const isActive = i === patternIndex;
-            return (
-              <motion.div
-                key={`p-${i}`}
-                animate={{ scale: isActive ? 1.15 : 1 }}
-                className={clsx(
-                  "w-8 h-10 flex items-center justify-center rounded-md font-mono font-bold text-sm border transition-all",
-                  isActive && operationType === OperationType.COMPARE
-                    ? "bg-brand/30 border-brand-light text-brand-light shadow-[0_0_12px_rgba(139,92,246,0.5)]"
-                    : "bg-surface/30 border-surface/60 text-white/60"
-                )}
-              >
-                {ch}
-              </motion.div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* LPS Table */}
-      <div>
-        <h4 className="text-xs font-semibold text-text-secondary uppercase tracking-wider mb-2">LPS Table</h4>
-        <div className="flex gap-[2px] flex-wrap">
-          {lps.map((val, i) => (
-            <div key={`lps-${i}`} className="flex flex-col items-center">
-              <div className="w-8 h-8 flex items-center justify-center rounded bg-surface/40 border border-surface text-xs font-mono text-white/70">{val}</div>
-              <span className="text-[9px] font-mono text-text-secondary/50 mt-0.5">{pattern[i]}</span>
+        <div className="mt-1 flex flex-wrap gap-[2px]">
+          {text.split('').map((_, index) => (
+            <div key={`text-index-${index}`} className="w-8 text-center text-[9px] font-mono text-text-secondary/50">
+              {index}
             </div>
           ))}
         </div>
       </div>
 
-      {matches.length > 0 && (
-        <div className="text-center text-green-400 font-semibold text-sm">
+      <div>
+        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-secondary">
+          Pattern (offset: {patternOffset})
+        </h4>
+        <div className="flex flex-wrap gap-[2px]">
+          {Array.from({ length: Math.min(patternOffset, text.length) }).map((_, index) => (
+            <div key={`spacer-${index}`} className="h-10 w-8" />
+          ))}
+          {pattern.split('').map((character, index) => {
+            const isActive = index === patternIndex;
+            return (
+              <motion.div
+                key={`pattern-${index}`}
+                animate={{ scale: isActive ? 1.15 : 1 }}
+                className={clsx(
+                  'flex h-10 w-8 items-center justify-center rounded-md border font-mono text-sm font-bold transition-all',
+                  isActive && operationType === OperationType.COMPARE
+                    ? 'border-brand-light bg-brand/30 text-brand-light shadow-[0_0_12px_rgba(139,92,246,0.5)]'
+                    : 'border-surface/60 bg-surface/30 text-white/60'
+                )}
+              >
+                {character}
+              </motion.div>
+            );
+          })}
+        </div>
+      </div>
+
+      {Array.isArray(lps) ? (
+        <div>
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-text-secondary">LPS Table</h4>
+          <div className="flex flex-wrap gap-[2px]">
+            {lps.map((value, index) => (
+              <div key={`lps-${index}`} className="flex flex-col items-center">
+                <div className="flex h-8 w-8 items-center justify-center rounded border border-surface bg-surface/40 text-xs font-mono text-white/70">
+                  {value}
+                </div>
+                <span className="mt-0.5 text-[9px] font-mono text-text-secondary/50">{pattern[index]}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : null}
+
+      {typeof patternHash === 'number' && typeof windowHash === 'number' ? (
+        <div className="rounded-xl border border-surface bg-panel/40 px-4 py-3 text-sm">
+          <div className="mb-1 text-xs font-semibold uppercase tracking-wider text-text-secondary">
+            Rolling Hash
+          </div>
+          <div className="font-mono text-cyan-200">pattern = {patternHash}</div>
+          <div className="font-mono text-cyan-100">window = {windowHash}</div>
+        </div>
+      ) : null}
+
+      {matches.length > 0 ? (
+        <div className="text-center text-sm font-semibold text-green-400">
           Matches found at: [{matches.join(', ')}]
         </div>
-      )}
+      ) : null}
     </div>
   );
 });
+
 KMPRenderer.displayName = 'KMPRenderer';

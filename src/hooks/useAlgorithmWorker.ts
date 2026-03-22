@@ -18,7 +18,7 @@ export const useAlgorithmWorker = <T>() => {
   }, []);
 
   const runAlgorithmAsync = useCallback(
-    (algorithmId: string, payload: any): Promise<AlgorithmResult<T>> => {
+    (algorithmId: string, payload: WorkerMessageRequest['payload']): Promise<AlgorithmResult<T>> => {
       return new Promise((resolve, reject) => {
         if (!workerRef.current) {
           useToastStore.getState().addToast('error', 'Web Worker not initialized.');
@@ -39,7 +39,7 @@ export const useAlgorithmWorker = <T>() => {
           clearTimeout(timeoutId);
           setIsComputing(false);
           if (e.data.success && e.data.result) {
-            resolve(e.data.result);
+            resolve(e.data.result as AlgorithmResult<T>);
           } else {
             useToastStore.getState().addToast('error', e.data.error || 'Computation failed.');
             reject(e.data.error);

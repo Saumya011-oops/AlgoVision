@@ -26,7 +26,7 @@ interface ExecutionState<T> {
   getMetadata: () => AlgorithmMetadata | null;
 }
 
-export const useExecutionStore = create<ExecutionState<any>>((set, get) => ({
+export const useExecutionStore = create<ExecutionState<unknown>>((set, get) => ({
   states: [],
   currentIndex: 0,
   isPlaying: false,

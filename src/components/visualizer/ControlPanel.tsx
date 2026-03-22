@@ -7,7 +7,7 @@ import { Play, Pause, SkipBack, SkipForward, RotateCcw } from 'lucide-react';
 
 export const ControlPanel = React.memo(() => {
   const { 
-    isPlaying, progressPercent, playbackSpeedMs, currentIndex, states,
+    isPlaying, playbackSpeedMs, currentIndex, states,
     play, pause, stepForward, stepBackward, jumpToStep, setSpeed, reset 
   } = useExecutionStore();
 
@@ -27,7 +27,7 @@ export const ControlPanel = React.memo(() => {
   }, [isPlaying, isFinished, playbackSpeedMs, stepForward, pause]);
 
   return (
-    <Card className="p-4 flex flex-col gap-4">
+    <Card className="p-3 flex flex-col gap-2">
       {/* Timeline Slider */}
       <div className="w-full">
         <Slider 
@@ -41,7 +41,7 @@ export const ControlPanel = React.memo(() => {
         />
       </div>
 
-      <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="flex items-center justify-between gap-4">
         {/* Playback Controls */}
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" onClick={reset} disabled={states.length === 0 || currentIndex === 0} title="Reset">
