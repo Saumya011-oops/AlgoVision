@@ -60,7 +60,7 @@ export const MergeSortRenderer = React.memo(() => {
       case 'active':   return 'bg-yellow-500/20 border-yellow-400 shadow-[0_0_12px_rgba(250,204,21,0.3)]';
       case 'merging':  return 'bg-blue-500/15 border-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.3)]';
       case 'sorted':   return 'bg-emerald-500/15 border-emerald-400/60';
-      default:         return 'bg-slate-800/60 border-slate-600/40';
+      default:         return 'bg-surface/60 border-surface-border/40';
     }
   };
 
@@ -69,7 +69,7 @@ export const MergeSortRenderer = React.memo(() => {
       case 'active':  return 'text-yellow-200';
       case 'merging': return 'text-blue-200';
       case 'sorted':  return 'text-emerald-300';
-      default:        return 'text-white';
+      default:        return 'text-text-primary';
     }
   };
 
@@ -85,10 +85,10 @@ export const MergeSortRenderer = React.memo(() => {
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-2xl">
       {/* Status bar */}
-      <div className="px-4 py-2.5 flex items-center gap-3 border-b border-slate-700/50 bg-slate-900/50 shrink-0">
+      <div className="px-4 py-2.5 flex items-center gap-3 border-b border-surface/50 bg-background/50 shrink-0">
         <span className="text-lg">{op.emoji}</span>
         <span className={clsx("font-bold text-xs uppercase tracking-wider", op.color)}>{op.label}</span>
-        <span className="text-white/70 text-xs flex-1 truncate">{msg}</span>
+        <span className="text-text-secondary text-xs flex-1 truncate">{msg}</span>
       </div>
 
       {/* Tree - all levels visible */}
@@ -100,7 +100,7 @@ export const MergeSortRenderer = React.memo(() => {
             <React.Fragment key={'level-' + levelIdx}>
               {/* Connecting arrows */}
               {levelIdx > 0 && levels[levelIdx - 1]?.length > 0 && (
-                <div className="flex items-center justify-center text-slate-600/60 shrink-0" style={{ height: 14 }}>
+                <div className="flex items-center justify-center text-text-secondary/60 shrink-0" style={{ height: 14 }}>
                   <svg width="24" height="14" viewBox="0 0 24 14">
                     <path d="M6 0 L6 10 L3 7 M6 10 L9 7" stroke="currentColor" fill="none" strokeWidth="1.2"/>
                     <path d="M18 0 L18 10 L15 7 M18 10 L21 7" stroke="currentColor" fill="none" strokeWidth="1.2"/>
@@ -149,7 +149,7 @@ export const MergeSortRenderer = React.memo(() => {
       </div>
 
       {/* Legend */}
-      <div className="px-4 py-2 border-t border-slate-700/50 flex items-center justify-center gap-5 text-[10px] font-medium text-slate-400 shrink-0 bg-slate-900/30">
+      <div className="px-4 py-2 border-t border-surface/50 flex items-center justify-center gap-5 text-[10px] font-medium text-text-secondary shrink-0 bg-background/30">
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-yellow-500/40 border border-yellow-500"></span> Splitting</span>
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-blue-500/40 border border-blue-500"></span> Merging</span>
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-500/40 border border-emerald-500"></span> Sorted</span>

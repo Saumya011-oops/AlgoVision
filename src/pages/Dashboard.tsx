@@ -53,13 +53,13 @@ export const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-1 overflow-hidden bg-background">
+    <div className="flex flex-1 overflow-hidden bg-background relative">
       <Sidebar />
 
-      <main className="relative flex flex-1 flex-col overflow-hidden">
+      <main className="relative flex flex-1 flex-col overflow-hidden md:pl-3">
         <header className="flex flex-wrap items-center justify-between gap-3 border-b border-surface px-4 py-3">
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-white">{definition.name}</h1>
+            <h1 className="text-lg font-bold tracking-tight text-text-primary">{definition.name}</h1>
             <p className="text-xs text-text-secondary">
               {isComparisonMode
                 ? 'Switch between focused study and head-to-head comparison'
@@ -71,7 +71,7 @@ export const Dashboard = () => {
             <button
               onClick={() => setComparisonMode(false)}
               className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
-                !isComparisonMode ? 'bg-brand text-white' : 'text-text-secondary hover:text-white'
+                !isComparisonMode ? 'bg-brand text-white' : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               <LayoutPanelTop className="w-4 h-4" />
@@ -80,7 +80,7 @@ export const Dashboard = () => {
             <button
               onClick={() => setComparisonMode(true)}
               className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
-                isComparisonMode ? 'bg-brand text-white' : 'text-text-secondary hover:text-white'
+                isComparisonMode ? 'bg-brand text-white' : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               <SplitSquareVertical className="w-4 h-4" />
@@ -108,11 +108,11 @@ export const Dashboard = () => {
                   key="visualizer"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="absolute inset-0 flex h-full flex-col gap-2 overflow-auto p-3"
+                  className="absolute inset-0 flex h-full flex-col gap-3 overflow-hidden p-3"
                 >
-                  <section className="flex flex-wrap items-center justify-between gap-3 border-b border-surface pb-1">
+                  <section className="flex flex-wrap items-center justify-between gap-3 border-b border-surface pb-1 shrink-0">
                     <div>
-                      <h2 className="text-xl font-bold capitalize tracking-tight text-white">
+                      <h2 className="text-xl font-bold capitalize tracking-tight text-text-primary">
                         {definition.name}
                       </h2>
                       <p className="text-xs text-text-secondary">Interactive Simulation</p>
@@ -132,7 +132,7 @@ export const Dashboard = () => {
                           onChange={(event) => setRequestedInputSize(Number(event.target.value))}
                           className="h-1 w-16 cursor-pointer accent-brand"
                         />
-                        <span className="w-5 text-center font-mono text-xs font-bold text-white">
+                        <span className="w-5 text-center font-mono text-xs font-bold text-text-primary">
                           {inputSize}
                         </span>
                       </div>
@@ -163,26 +163,30 @@ export const Dashboard = () => {
                     </div>
                   </section>
 
-                  <section className="relative z-0 min-h-[55vh] flex-1">
-                    <Canvas />
-                  </section>
+                  <div className="flex-1 flex flex-col lg:flex-row gap-4 overflow-hidden">
+                    {/* Left Pane: Visuals */}
+                    <div className="flex-1 flex flex-col gap-2 min-w-0">
+                      <section className="relative z-0 min-h-[40vh] lg:min-h-0 flex-1">
+                        <Canvas />
+                      </section>
+                      <section className="shrink-0">
+                        <ControlPanel />
+                      </section>
+                    </div>
 
-                  <section className="shrink-0">
-                    <ControlPanel />
-                  </section>
-
-                  <section className="shrink-0">
-                    <PerformancePanel
-                      algorithmId={algorithmId}
-                      inputSize={inputSize}
-                      dataPattern={dataPattern}
-                    />
-                  </section>
-
-                  <section className="grid shrink-0 gap-2 xl:grid-cols-[1.1fr_0.9fr]">
-                    <ExplanationPanel algorithmId={algorithmId} />
-                    <CodeSyncPanel algorithmId={algorithmId} />
-                  </section>
+                    {/* Right Pane: Code & Details */}
+                    <div className="w-full lg:w-[400px] xl:w-[500px] flex flex-col gap-3 shrink-0 overflow-y-auto pr-1 pb-4">
+                      <div className="shrink-0 flex flex-col">
+                        <CodeSyncPanel algorithmId={algorithmId} />
+                      </div>
+                      <PerformancePanel
+                        algorithmId={algorithmId}
+                        inputSize={inputSize}
+                        dataPattern={dataPattern}
+                      />
+                      <ExplanationPanel algorithmId={algorithmId} />
+                    </div>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

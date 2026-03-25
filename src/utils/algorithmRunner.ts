@@ -3,6 +3,13 @@ import { generateKnapsackStates } from '../algorithms/dp/knapsack';
 import { generateLCSStates } from '../algorithms/dp/lcs';
 import { generateBellmanFordStates } from '../algorithms/graph/bellmanFord';
 import { generateBFSStates } from '../algorithms/graph/bfs';
+import { generateDFSStates } from '../algorithms/graph/dfs';
+import { generateUCSStates } from '../algorithms/graph/ucs';
+import { generateDLSStates } from '../algorithms/graph/dls';
+import { generateIDDFSStates } from '../algorithms/graph/iddfs';
+import { generateBidirectionalStates } from '../algorithms/graph/bidirectional';
+import { generateBestFirstStates } from '../algorithms/graph/bestFirst';
+import { generateAStarStates } from '../algorithms/graph/aStar';
 import { generateDijkstraStates } from '../algorithms/graph/dijkstra';
 import { generateBubbleSortStates } from '../algorithms/sorting/bubbleSort';
 import { generateHeapSortStates } from '../algorithms/sorting/heapSort';
@@ -11,6 +18,10 @@ import { generateQuickSortStates } from '../algorithms/sorting/quickSort';
 import { generateSelectionSortStates } from '../algorithms/sorting/selectionSort';
 import { generateKMPStates } from '../algorithms/string/kmp';
 import { generateRabinKarpStates } from '../algorithms/string/rabinKarp';
+import { generateBSTInsertStates } from '../algorithms/tree/bstInsert';
+import { generatePreorderStates } from '../algorithms/tree/preorder';
+import { generateInorderStates } from '../algorithms/tree/inorder';
+import { generatePostorderStates } from '../algorithms/tree/postorder';
 import { AlgorithmResult } from '../types/AlgorithmState';
 import { getAlgorithmDefinition } from '../data/algorithmCatalog';
 
@@ -73,6 +84,20 @@ export const runAlgorithm = (
       return generateBellmanFordStates(0, Math.max(5, Math.min(9, size)));
     case 'bfs':
       return generateBFSStates(0, Math.max(5, Math.min(9, size)));
+    case 'dfs':
+      return generateDFSStates(0, Math.max(5, Math.min(9, size)));
+    case 'ucs':
+      return generateUCSStates(0, Math.max(5, Math.min(9, size)));
+    case 'dls':
+      return generateDLSStates(0, Math.max(5, Math.min(9, size)), Math.max(1, Math.floor(size / 2)));
+    case 'iddfs':
+      return generateIDDFSStates(0, Math.max(5, Math.min(9, size)));
+    case 'bidirectional':
+      return generateBidirectionalStates(0, Math.max(5, Math.min(9, size)));
+    case 'best-first':
+      return generateBestFirstStates(0, Math.max(5, Math.min(9, size)));
+    case 'a-star':
+      return generateAStarStates(0, Math.max(5, Math.min(9, size)));
     case 'fibonacci-dp':
       return generateFibonacciDPStates(Math.max(5, Math.min(14, size)));
     case 'knapsack-01':
@@ -85,6 +110,14 @@ export const runAlgorithm = (
     }
     case 'rabin-karp':
       return generateRabinKarpStates(Math.max(6, Math.min(12, size)));
+    case 'bst-insert':
+      return generateBSTInsertStates(generateArray(Math.max(5, Math.min(15, size)), pattern));
+    case 'preorder':
+      return generatePreorderStates(Math.max(5, Math.min(15, size)));
+    case 'inorder':
+      return generateInorderStates(Math.max(5, Math.min(15, size)));
+    case 'postorder':
+      return generatePostorderStates(Math.max(5, Math.min(15, size)));
     default:
       return runAlgorithm(getAlgorithmDefinition(algorithmId).id, options);
   }
@@ -95,6 +128,13 @@ export const getInputSizeRange = (algorithmId: string) => {
     case 'dijkstra':
     case 'bellman-ford':
     case 'bfs':
+    case 'dfs':
+    case 'ucs':
+    case 'dls':
+    case 'iddfs':
+    case 'bidirectional':
+    case 'best-first':
+    case 'a-star':
       return { min: 5, max: 9, label: 'Nodes' };
     case 'fibonacci-dp':
       return { min: 5, max: 14, label: 'N' };
@@ -104,6 +144,11 @@ export const getInputSizeRange = (algorithmId: string) => {
       return { min: 6, max: 12, label: 'Size' };
     case 'kmp':
       return { min: 6, max: 12, label: 'Text' };
+    case 'bst-insert':
+    case 'preorder':
+    case 'inorder':
+    case 'postorder':
+      return { min: 5, max: 15, label: 'Nodes' };
     default:
       return { min: 4, max: 16, label: 'Size' };
   }
@@ -114,6 +159,13 @@ export const getAnalyticsSampleSizes = (algorithmId: string) => {
     case 'dijkstra':
     case 'bellman-ford':
     case 'bfs':
+    case 'dfs':
+    case 'ucs':
+    case 'dls':
+    case 'iddfs':
+    case 'bidirectional':
+    case 'best-first':
+    case 'a-star':
       return [5, 6, 7, 8, 9];
     case 'fibonacci-dp':
       return [5, 7, 9, 11, 13];
@@ -123,6 +175,11 @@ export const getAnalyticsSampleSizes = (algorithmId: string) => {
       return [6, 7, 8, 9, 10, 11, 12];
     case 'kmp':
       return [6, 8, 10, 12];
+    case 'bst-insert':
+    case 'preorder':
+    case 'inorder':
+    case 'postorder':
+      return [5, 7, 9, 11, 13, 15];
     default:
       return [4, 6, 8, 10, 12, 14, 16];
   }

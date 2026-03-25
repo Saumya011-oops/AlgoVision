@@ -8,7 +8,7 @@ import { QuickSortRenderer } from './QuickSortRenderer';
 import { SortingRenderer } from './SortingRenderer';
 
 const genericSortingAlgorithms = ['bubble-sort', 'selection-sort', 'heap-sort'];
-const graphAlgorithms = ['dijkstra', 'bellman-ford', 'bfs'];
+const graphAlgorithms = ['dijkstra', 'bellman-ford', 'bfs', 'dfs', 'ucs', 'dls', 'iddfs', 'bidirectional', 'best-first', 'a-star'];
 const dynamicProgrammingAlgorithms = ['fibonacci-dp', 'knapsack-01', 'lcs'];
 const stringAlgorithms = ['kmp', 'rabin-karp'];
 

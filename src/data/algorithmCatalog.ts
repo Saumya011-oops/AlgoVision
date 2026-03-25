@@ -1,6 +1,6 @@
 import { OperationType } from '../types/AlgorithmState';
 
-export type AlgorithmCategoryId = 'sorting' | 'graph' | 'dp' | 'string';
+export type AlgorithmCategoryId = 'sorting' | 'graph' | 'dp' | 'string' | 'search' | 'tree';
 
 export interface AlgorithmFact {
   label: string;
@@ -312,7 +312,7 @@ function heapify(arr, root, size) {
   {
     id: 'bfs',
     name: 'Breadth-First Search',
-    category: 'graph',
+    category: 'search',
     description:
       'Breadth-First Search explores the graph level by level using a queue, guaranteeing the shortest path in unweighted graphs.',
     bestTime: 'O(V + E)',
@@ -346,6 +346,224 @@ function heapify(arr, root, size) {
       [OperationType.OVERWRITE]: 9,
       [OperationType.DONE]: 12,
     },
+  },
+  {
+    id: 'dfs',
+    name: 'Depth-First Search',
+    category: 'search',
+    description: 'Depth-First Search explores a graph by going as deep as possible along each branch before backtracking.',
+    bestTime: 'O(V + E)',
+    avgTime: 'O(V + E)',
+    worstTime: 'O(V + E)',
+    space: 'O(V)',
+    spaceNote: 'recursion stack or explicit stack',
+    facts: [
+      { label: 'Type', value: 'Uninformed Search' },
+      { label: 'Data Structure', value: 'Stack' },
+      { label: 'Optimal', value: 'No' },
+    ],
+    code: `function dfs(graph, source, visited = new Set()) {
+  visited.add(source);
+  recordVisit(source);
+
+  for (const neighbor of graph.neighbors(source)) {
+    if (!visited.has(neighbor)) {
+      dfs(graph, neighbor, visited);
+    }
+  }
+}`,
+    defaultHighlightedLines: {
+      [OperationType.VISIT]: 2,
+      [OperationType.COMPARE]: 5,
+      [OperationType.DONE]: 9,
+    },
+  },
+  {
+    id: 'ucs',
+    name: 'Uniform Cost Search',
+    category: 'search',
+    description: 'Uniform Cost Search expands the least cost node next, guaranteeing optimal paths in weighted graphs.',
+    bestTime: 'O(1)',
+    avgTime: 'O(b^(1+C*/e))',
+    worstTime: 'O(b^(1+C*/e))',
+    space: 'O(b^(1+C*/e))',
+    spaceNote: 'priority queue overhead',
+    facts: [
+      { label: 'Type', value: 'Uninformed Search' },
+      { label: 'Data Structure', value: 'Priority Queue' },
+      { label: 'Optimal', value: 'Yes' },
+    ],
+    code: `function ucs(graph, source, goal) {
+  const pq = new PriorityQueue();
+  pq.push(source, 0);
+  const costs = { [source]: 0 };
+
+  while (!pq.isEmpty()) {
+    const { element: node, priority: cost } = pq.pop();
+    if (node === goal) return cost;
+
+    for (const edge of graph.edgesFrom(node)) {
+      const newCost = cost + edge.weight;
+      if (newCost < (costs[edge.to] ?? Infinity)) {
+        costs[edge.to] = newCost;
+        pq.push(edge.to, newCost);
+      }
+    }
+  }
+}`,
+    defaultHighlightedLines: { [OperationType.VISIT]: 7, [OperationType.COMPARE]: 13, [OperationType.DONE]: 18 },
+  },
+  {
+    id: 'dls',
+    name: 'Depth-Limited Search',
+    category: 'search',
+    description: 'Depth-Limited Search is DFS with a maximum depth bound to avoid infinite loops.',
+    bestTime: 'O(b)',
+    avgTime: 'O(b^l)',
+    worstTime: 'O(b^l)',
+    space: 'O(bl)',
+    spaceNote: 'stack depth limited to L',
+    facts: [
+      { label: 'Type', value: 'Uninformed Search' },
+      { label: 'Limit', value: 'Depth bound' },
+      { label: 'Optimal', value: 'No' },
+    ],
+    code: `function dls(node, target, limit, depth = 0) {
+  if (node === target) return true;
+  if (depth === limit) return false;
+
+  for (const neighbor of graph.neighbors(node)) {
+    if (dls(neighbor, target, limit, depth + 1)) {
+      return true;
+    }
+  }
+  return false;
+}`,
+    defaultHighlightedLines: { [OperationType.VISIT]: 2, [OperationType.COMPARE]: 3, [OperationType.DONE]: 10 },
+  },
+  {
+    id: 'iddfs',
+    name: 'Iterative Deepening',
+    category: 'search',
+    description: 'IDDFS repeatedly runs Depth-Limited Search with increasing depth bounds, combining the low space of DFS with the optimality of BFS.',
+    bestTime: 'O(b)',
+    avgTime: 'O(b^d)',
+    worstTime: 'O(b^d)',
+    space: 'O(bd)',
+    spaceNote: 'stack bounded by current depth limit',
+    facts: [
+      { label: 'Type', value: 'Uninformed Search' },
+      { label: 'Hybrid', value: 'DFS + BFS traits' },
+      { label: 'Optimal', value: 'Yes (unweighted)' },
+    ],
+    code: `function iddfs(start, target, maxDepth) {
+  for (let limit = 0; limit <= maxDepth; limit++) {
+    const found = dls(start, target, limit);
+    if (found) return true;
+  }
+  return false;
+}`,
+    defaultHighlightedLines: { [OperationType.VISIT]: 3, [OperationType.COMPARE]: 4, [OperationType.DONE]: 6 },
+  },
+  {
+    id: 'bidirectional',
+    name: 'Bidirectional Search',
+    category: 'search',
+    description: 'Runs two simultaneous searches—one forward from the root and one backward from the goal—meeting in the middle.',
+    bestTime: 'O(1)',
+    avgTime: 'O(b^(d/2))',
+    worstTime: 'O(b^(d/2))',
+    space: 'O(b^(d/2))',
+    spaceNote: 'frontiers of both searches',
+    facts: [
+      { label: 'Type', value: 'Uninformed Search' },
+      { label: 'Mechanic', value: 'Two-way expansion' },
+      { label: 'Optimal', value: 'Yes' },
+    ],
+    code: `function bidirectional(start, goal) {
+  let fwdQueue = [start], bwdQueue = [goal];
+  let fwdVisited = new Set([start]), bwdVisited = new Set([goal]);
+
+  while (fwdQueue.length && bwdQueue.length) {
+    expand(fwdQueue, fwdVisited);
+    if (intersect(fwdVisited, bwdVisited)) return true;
+
+    expand(bwdQueue, bwdVisited);
+    if (intersect(fwdVisited, bwdVisited)) return true;
+  }
+  return false;
+}`,
+    defaultHighlightedLines: { [OperationType.VISIT]: 6, [OperationType.COMPARE]: 7, [OperationType.DONE]: 13 },
+  },
+  {
+    id: 'best-first',
+    name: 'Best First Search',
+    category: 'search',
+    description: 'An informed search that expands nodes according to an evaluation function (often a heuristic estimating distance to the goal).',
+    bestTime: 'O(1)',
+    avgTime: 'O(b^m)',
+    worstTime: 'O(b^m)',
+    space: 'O(b^m)',
+    spaceNote: 'priority queue holds frontier',
+    facts: [
+      { label: 'Type', value: 'Informed Search' },
+      { label: 'Heuristic', value: 'f(n) = h(n)' },
+      { label: 'Optimal', value: 'No' },
+    ],
+    code: `function bestFirstSearch(start, goal, heuristic) {
+  const pq = new PriorityQueue();
+  pq.push(start, heuristic(start));
+  const visited = new Set();
+
+  while (!pq.isEmpty()) {
+    const node = pq.pop();
+    if (node === goal) return true;
+    visited.add(node);
+
+    for (const neighbor of graph.neighbors(node)) {
+      if (!visited.has(neighbor)) {
+        pq.push(neighbor, heuristic(neighbor));
+      }
+    }
+  }
+}`,
+    defaultHighlightedLines: { [OperationType.VISIT]: 8, [OperationType.COMPARE]: 13, [OperationType.DONE]: 17 },
+  },
+  {
+    id: 'a-star',
+    name: 'A* Search',
+    category: 'search',
+    description: 'A* evaluates nodes by combining the path cost so far, g(n), and the estimated cost to the goal, h(n).',
+    bestTime: 'O(1)',
+    avgTime: 'O(E)',
+    worstTime: 'O(E)',
+    space: 'O(V)',
+    spaceNote: 'stores shortest paths to evaluated nodes',
+    facts: [
+      { label: 'Type', value: 'Informed Search' },
+      { label: 'Function', value: 'f(n) = g(n) + h(n)' },
+      { label: 'Optimal', value: 'Yes (with admissible h)' },
+    ],
+    code: `function aStar(start, goal, heuristic) {
+  const pq = new PriorityQueue();
+  pq.push(start, 0);
+  const gCost = { [start]: 0 };
+
+  while (!pq.isEmpty()) {
+    const { element: node } = pq.pop();
+    if (node === goal) return gCost[node];
+
+    for (const edge of graph.edgesFrom(node)) {
+      const tentativeG = gCost[node] + edge.weight;
+      if (tentativeG < (gCost[edge.to] ?? Infinity)) {
+        gCost[edge.to] = tentativeG;
+        const fCost = tentativeG + heuristic(edge.to);
+        pq.push(edge.to, fCost);
+      }
+    }
+  }
+}`,
+    defaultHighlightedLines: { [OperationType.VISIT]: 8, [OperationType.COMPARE]: 13, [OperationType.DONE]: 19 },
   },
   {
     id: 'fibonacci-dp',
@@ -540,6 +758,135 @@ function heapify(arr, root, size) {
       [OperationType.DONE]: 13,
     },
   },
+  {
+    id: 'bst-insert',
+    name: 'BST Insertion',
+    category: 'tree',
+    description: 'Builds a Binary Search Tree by comparing values to each node and branching left for smaller values, right for larger values.',
+    bestTime: 'O(log N)',
+    avgTime: 'O(log N)',
+    worstTime: 'O(N)',
+    space: 'O(N)',
+    spaceNote: 'to store N elements',
+    facts: [
+      { label: 'Type', value: 'Tree Construction' },
+      { label: 'Balance', value: 'Unbalanced' },
+      { label: 'Sort', value: 'Yields sorted inorder' }
+    ],
+    code: `function insert(root, val) {
+  if (root === null) return new Node(val);
+  
+  let curr = root;
+  while (true) {
+    if (val < curr.value) {
+      if (curr.left === null) {
+        curr.left = new Node(val);
+        break;
+      }
+      curr = curr.left;
+    } else {
+      if (curr.right === null) {
+        curr.right = new Node(val);
+        break;
+      }
+      curr = curr.right;
+    }
+  }
+}`,
+    defaultHighlightedLines: {
+      [OperationType.VISIT]: 11,
+      [OperationType.COMPARE]: 5,
+      [OperationType.OVERWRITE]: 7,
+      [OperationType.DONE]: 20
+    }
+  },
+  {
+    id: 'preorder',
+    name: 'Preorder Traversal',
+    category: 'tree',
+    description: 'Visits the current node first, then recursively traverses the left subtree, and finally the right subtree.',
+    bestTime: 'O(N)',
+    avgTime: 'O(N)',
+    worstTime: 'O(N)',
+    space: 'O(H)',
+    spaceNote: 'call stack proportional to height',
+    facts: [
+      { label: 'Type', value: 'Depth-First Search' },
+      { label: 'Order', value: 'Root -> Left -> Right' },
+      { label: 'Uses', value: 'Copying trees' }
+    ],
+    code: `function preorder(node) {
+  if (node === null) return;
+  
+  process(node.value);
+  preorder(node.left);
+  preorder(node.right);
+}`,
+    defaultHighlightedLines: {
+      [OperationType.VISIT]: 5,
+      [OperationType.COMPARE]: 2,
+      [OperationType.OVERWRITE]: 4,
+      [OperationType.DONE]: 7
+    }
+  },
+  {
+    id: 'inorder',
+    name: 'Inorder Traversal',
+    category: 'tree',
+    description: 'Recursively traverses the left subtree, visits the current node, then traverses the right subtree.',
+    bestTime: 'O(N)',
+    avgTime: 'O(N)',
+    worstTime: 'O(N)',
+    space: 'O(H)',
+    spaceNote: 'call stack proportional to height',
+    facts: [
+      { label: 'Type', value: 'Depth-First Search' },
+      { label: 'Order', value: 'Left -> Root -> Right' },
+      { label: 'Uses', value: 'Sorted output in BST' }
+    ],
+    code: `function inorder(node) {
+  if (node === null) return;
+  
+  inorder(node.left);
+  process(node.value);
+  inorder(node.right);
+}`,
+    defaultHighlightedLines: {
+      [OperationType.VISIT]: 4,
+      [OperationType.COMPARE]: 2,
+      [OperationType.OVERWRITE]: 5,
+      [OperationType.DONE]: 7
+    }
+  },
+  {
+    id: 'postorder',
+    name: 'Postorder Traversal',
+    category: 'tree',
+    description: 'Recursively traverses the left subtree, then the right subtree, and finally visits the current node.',
+    bestTime: 'O(N)',
+    avgTime: 'O(N)',
+    worstTime: 'O(N)',
+    space: 'O(H)',
+    spaceNote: 'call stack proportional to height',
+    facts: [
+      { label: 'Type', value: 'Depth-First Search' },
+      { label: 'Order', value: 'Left -> Right -> Root' },
+      { label: 'Uses', value: 'Deleting trees' }
+    ],
+    code: `function postorder(node) {
+  if (node === null) return;
+  
+  postorder(node.left);
+  postorder(node.right);
+  process(node.value);
+}`,
+    defaultHighlightedLines: {
+      [OperationType.VISIT]: 4,
+      [OperationType.COMPARE]: 2,
+      [OperationType.OVERWRITE]: 6,
+      [OperationType.DONE]: 8
+    }
+  }
 ];
 
 export const ALGORITHM_DEFINITIONS = definitions.reduce<Record<string, AlgorithmDefinition>>((acc, definition) => {
@@ -567,6 +914,16 @@ export const ALGORITHM_CATEGORIES = [
     id: 'string' as const,
     name: 'String Algorithms',
     items: definitions.filter((definition) => definition.category === 'string'),
+  },
+  {
+    id: 'search' as const,
+    name: 'Search Algorithms',
+    items: definitions.filter((definition) => definition.category === 'search'),
+  },
+  {
+    id: 'tree' as const,
+    name: 'Tree Algorithms',
+    items: definitions.filter((definition) => definition.category === 'tree'),
   },
 ];
 

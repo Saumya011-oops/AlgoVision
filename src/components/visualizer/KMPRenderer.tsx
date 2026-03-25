@@ -58,8 +58,8 @@ export const KMPRenderer = React.memo(() => {
                     : isMatchRange
                     ? 'border-green-400 bg-green-500/20 text-green-300'
                     : isInWindow
-                    ? 'border-cyan-400/70 bg-cyan-500/10 text-cyan-100'
-                    : 'border-surface bg-surface/40 text-white/80'
+                    ? 'border-cyan-400/70 bg-cyan-500/10 text-cyan-500'
+                    : 'border-surface bg-surface/40 text-text-primary/80'
                 )}
               >
                 {character}
@@ -94,7 +94,7 @@ export const KMPRenderer = React.memo(() => {
                   'flex h-10 w-8 items-center justify-center rounded-md border font-mono text-sm font-bold transition-all',
                   isActive && operationType === OperationType.COMPARE
                     ? 'border-brand-light bg-brand/30 text-brand-light shadow-[0_0_12px_rgba(139,92,246,0.5)]'
-                    : 'border-surface/60 bg-surface/30 text-white/60'
+                    : 'border-surface/60 bg-surface/30 text-text-secondary'
                 )}
               >
                 {character}
@@ -110,7 +110,7 @@ export const KMPRenderer = React.memo(() => {
           <div className="flex flex-wrap gap-[2px]">
             {lps.map((value, index) => (
               <div key={`lps-${index}`} className="flex flex-col items-center">
-                <div className="flex h-8 w-8 items-center justify-center rounded border border-surface bg-surface/40 text-xs font-mono text-white/70">
+                <div className="flex h-8 w-8 items-center justify-center rounded border border-surface bg-surface/40 text-xs font-mono text-text-secondary">
                   {value}
                 </div>
                 <span className="mt-0.5 text-[9px] font-mono text-text-secondary/50">{pattern[index]}</span>

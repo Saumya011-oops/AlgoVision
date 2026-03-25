@@ -32,7 +32,7 @@ export const AlgorithmIntro = ({ onStart, algorithmId }: IntroProps) => {
                   Algorithm Overview
                 </div>
 
-                <h1 className="text-4xl font-black capitalize tracking-tight text-white md:text-5xl">
+                <h1 className="text-4xl font-black capitalize tracking-tight text-text-primary md:text-5xl">
                   {definition.name}
                 </h1>
 
@@ -57,7 +57,7 @@ export const AlgorithmIntro = ({ onStart, algorithmId }: IntroProps) => {
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">Time Complexity</h3>
+                    <h3 className="text-lg font-semibold text-text-primary">Time Complexity</h3>
                     <div className="mt-2 flex flex-col gap-1 font-mono text-sm">
                       <div className="flex justify-between gap-4 text-text-secondary">
                         <span>Best:</span>
@@ -80,7 +80,7 @@ export const AlgorithmIntro = ({ onStart, algorithmId }: IntroProps) => {
                     <HardDrive className="w-6 h-6" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-white">Space Complexity</h3>
+                    <h3 className="text-lg font-semibold text-text-primary">Space Complexity</h3>
                     <div className="mt-2 font-mono text-sm text-blue-300">
                       {definition.space}
                       <span className="ml-2 text-xs font-sans text-text-secondary">

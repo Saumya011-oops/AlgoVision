@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react';
-import { motion } from 'framer-motion';
+import React, { useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
-import { ArrowRightLeft, BarChart3, PenSquare, TrendingUp, Zap } from 'lucide-react';
+import { ArrowRightLeft, BarChart3, PenSquare, TrendingUp, Zap, ChevronDown } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { Button } from '../ui/Button';
 import { useExecutionStore } from '../../store/executionStore';
 import { getAlgorithmDefinition } from '../../data/algorithmCatalog';
 import { DataPattern, getAnalyticsSampleSizes, runAlgorithm } from '../../utils/algorithmRunner';
@@ -16,6 +17,7 @@ interface PerformancePanelProps {
 
 export const PerformancePanel = React.memo(
   ({ algorithmId, inputSize, dataPattern }: PerformancePanelProps) => {
+    const [isExpanded, setIsExpanded] = useState(false);
     const { states, currentIndex } = useExecutionStore();
     const definition = getAlgorithmDefinition(algorithmId);
 
@@ -41,13 +43,33 @@ export const PerformancePanel = React.memo(
     return (
       <Card className="bg-surface/30">
         <CardHeader className="flex flex-row items-center gap-2 border-b border-surface/50 py-2 px-3">
-          <BarChart3 className="w-3.5 h-3.5 text-cyan-400" />
-          <CardTitle className="text-xs font-medium">Performance Analytics</CardTitle>
-          <span className="ml-auto text-[9px] font-mono text-text-secondary">{progress}% complete</span>
+          <BarChart3 className="w-3.5 h-3.5 text-brand" />
+          <CardTitle className="text-xs font-medium text-text-primary">Performance Analytics</CardTitle>
+          <span className="ml-auto mr-1 text-[9px] font-mono text-text-secondary">{progress}% complete</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7"
+            onClick={() => setIsExpanded((value) => !value)}
+            title={isExpanded ? 'Collapse panel' : 'Expand panel'}
+          >
+            <ChevronDown
+              className={clsx('w-4 h-4 transition-transform text-text-secondary', isExpanded ? 'rotate-0' : '-rotate-90')}
+            />
+          </Button>
         </CardHeader>
 
-        <CardContent className="grid gap-3 p-3 lg:grid-cols-[1.1fr_1fr]">
-          <div className="space-y-3">
+        <AnimatePresence initial={false}>
+          {isExpanded && (
+            <motion.div
+              key="perf-content"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              <CardContent className="grid gap-3 p-3 lg:grid-cols-[1.1fr_1fr]">
+                <div className="space-y-3">
             <div className="grid grid-cols-3 gap-1.5">
               <ComplexityCell label="Best" value={definition.bestTime} color="text-emerald-400" />
               <ComplexityCell label="Average" value={definition.avgTime} color="text-yellow-400" />
@@ -85,7 +107,7 @@ export const PerformancePanel = React.memo(
               {definition.facts.map((fact) => (
                 <div key={fact.label} className="rounded bg-background/50 px-2 py-2">
                   <div className="text-[9px] uppercase tracking-wider text-text-secondary">{fact.label}</div>
-                  <div className="mt-0.5 text-xs font-semibold text-white">{fact.value}</div>
+                  <div className="mt-0.5 text-xs font-semibold text-text-primary">{fact.value}</div>
                 </div>
               ))}
             </div>
@@ -94,7 +116,7 @@ export const PerformancePanel = React.memo(
           <div className="rounded-xl border border-surface/60 bg-background/35 p-3">
             <div className="mb-3 flex items-center justify-between">
               <div>
-                <h4 className="text-xs font-semibold uppercase tracking-wider text-white">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-text-primary">
                   Input Size vs Operations
                 </h4>
                 <p className="text-[10px] text-text-secondary">
@@ -143,6 +165,9 @@ export const PerformancePanel = React.memo(
             </div>
           </div>
         </CardContent>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Card>
     );
   }

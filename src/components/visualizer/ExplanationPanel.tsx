@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { AlertCircle, BookOpen, Lightbulb } from 'lucide-react';
+import clsx from 'clsx';
+import { AlertCircle, BookOpen, Lightbulb, ChevronDown } from 'lucide-react';
 import { useExecutionStore } from '../../store/executionStore';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/Card';
+import { Button } from '../ui/Button';
 import { getAlgorithmDefinition } from '../../data/algorithmCatalog';
 import { OperationType } from '../../types/AlgorithmState';
 
@@ -30,6 +32,7 @@ const buildWhyReason = (algorithmId: string, operationType?: OperationType) => {
 };
 
 export const ExplanationPanel = React.memo(({ algorithmId }: ExplanationPanelProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const { getCurrentState, getMetadata } = useExecutionStore();
   const metadata = getMetadata();
   const currentState = getCurrentState();
@@ -38,12 +41,32 @@ export const ExplanationPanel = React.memo(({ algorithmId }: ExplanationPanelPro
   return (
     <Card className="flex flex-col bg-surface/30">
       <CardHeader className="flex flex-row items-center gap-2 border-b border-surface/50 py-2 px-3">
-        <BookOpen className="w-3.5 h-3.5 text-green-400" />
-        <CardTitle className="text-xs font-medium">Algorithm Insights</CardTitle>
+        <BookOpen className="w-3.5 h-3.5 text-brand" />
+        <CardTitle className="text-xs font-medium text-text-primary">Algorithm Insights</CardTitle>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-7 w-7 ml-auto"
+          onClick={() => setIsExpanded((value) => !value)}
+          title={isExpanded ? 'Collapse panel' : 'Expand panel'}
+        >
+          <ChevronDown
+            className={clsx('w-4 h-4 transition-transform text-text-secondary', isExpanded ? 'rotate-0' : '-rotate-90')}
+          />
+        </Button>
       </CardHeader>
 
-      <CardContent className="space-y-3 overflow-y-auto p-3">
-        <AnimatePresence mode="popLayout">
+      <AnimatePresence initial={false}>
+        {isExpanded && (
+          <motion.div
+            key="expl-content"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <CardContent className="space-y-3 overflow-y-auto p-3">
+              <AnimatePresence mode="popLayout">
           {metadata?.message ? (
             <motion.div
               key={metadata.stepNumber}
@@ -69,12 +92,12 @@ export const ExplanationPanel = React.memo(({ algorithmId }: ExplanationPanelPro
         </AnimatePresence>
 
         {whyReason ? (
-          <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/8 p-3">
-            <div className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-cyan-300">
+          <div className="rounded-lg border border-brand/20 bg-brand/5 p-3">
+            <div className="mb-1 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-brand">
               <Lightbulb className="w-3.5 h-3.5" />
               Why This Step Matters
             </div>
-            <p className="text-sm leading-relaxed text-slate-200">{whyReason}</p>
+            <p className="text-sm leading-relaxed text-text-primary">{whyReason}</p>
           </div>
         ) : null}
 
@@ -90,7 +113,7 @@ export const ExplanationPanel = React.memo(({ algorithmId }: ExplanationPanelPro
                   className="flex flex-col rounded border border-surface bg-background p-2"
                 >
                   <span className="text-[10px] font-mono text-text-secondary">{key}</span>
-                  <span className="break-all font-mono text-sm font-medium text-white">
+                  <span className="break-all font-mono text-sm font-medium text-text-primary">
                     {String(value)}
                   </span>
                 </div>
@@ -98,7 +121,10 @@ export const ExplanationPanel = React.memo(({ algorithmId }: ExplanationPanelPro
             </div>
           </div>
         ) : null}
-      </CardContent>
+            </CardContent>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Card>
   );
 });

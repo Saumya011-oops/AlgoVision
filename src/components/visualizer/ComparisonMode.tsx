@@ -75,7 +75,7 @@ const MiniArrayView = React.memo(
 
     const array = data.array || [];
     if (!Array.isArray(array) || array.length === 0) {
-      return <div className="py-4 text-center text-xs text-slate-400">Tree visualization active</div>;
+      return <div className="py-4 text-center text-xs text-text-secondary">Tree visualization active</div>;
     }
 
     return (
@@ -87,8 +87,8 @@ const MiniArrayView = React.memo(
             typeof data.sortedBoundary === 'number' &&
             (sortsFromLeft ? index < data.sortedBoundary : index >= data.sortedBoundary);
 
-          let background = 'bg-slate-800/60 border-slate-600/40';
-          let textColor = 'text-white';
+          let background = 'bg-surface/60 border-surface-border/40';
+          let textColor = 'text-text-primary';
 
           if (isActive && operationType === 'SWAP') {
             background = 'bg-orange-500/25 border-orange-400';
@@ -136,7 +136,7 @@ const AlgoSelector = ({
     <select
       value={value}
       onChange={(event) => onChange(event.target.value)}
-      className="cursor-pointer rounded-lg border border-surface bg-surface/60 px-2 py-1.5 text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand"
+      className="cursor-pointer rounded-lg border border-surface bg-surface/60 px-2 py-1.5 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-brand"
     >
       {COMPARISON_SORTING_ALGOS.map((algorithm) => (
         <option key={algorithm.id} value={algorithm.id}>
@@ -249,7 +249,7 @@ export const ComparisonMode = React.memo(() => {
         <div className="flex items-center gap-3">
           <ArrowRightLeft className="w-5 h-5 text-brand-light" />
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">Comparison Mode</h1>
+            <h1 className="text-xl font-bold tracking-tight text-text-primary">Comparison Mode</h1>
             <p className="text-xs text-text-secondary">Side-by-side algorithm analysis on identical input</p>
           </div>
         </div>
@@ -270,7 +270,7 @@ export const ComparisonMode = React.memo(() => {
               onChange={(event) => setInputSize(Number(event.target.value))}
               className="h-1 w-16 cursor-pointer accent-brand"
             />
-            <span className="w-5 text-center font-mono text-xs font-bold text-white">{inputSize}</span>
+            <span className="w-5 text-center font-mono text-xs font-bold text-text-primary">{inputSize}</span>
           </div>
 
           <div className="flex items-center overflow-hidden rounded-lg border border-surface">
@@ -302,7 +302,7 @@ export const ComparisonMode = React.memo(() => {
         <Card className="flex items-center justify-between gap-3 border border-surface bg-panel/50 px-4 py-3">
           <div className="text-xs text-text-secondary">
             {winnerLabel}:{' '}
-            <span className="font-semibold text-white">
+            <span className="font-semibold text-text-primary">
               {winner === 'tie'
                 ? 'Tie'
                 : winner === 'left'
@@ -447,7 +447,7 @@ const PanelCard = ({
         Leader
       </div>
     ) : null}
-    <div className="mb-1 text-sm font-bold capitalize text-white">{title.replace(/-/g, ' ')}</div>
+    <div className="mb-1 text-sm font-bold capitalize text-text-primary">{title.replace(/-/g, ' ')}</div>
     <div className="mb-2 text-[10px] text-text-secondary">{state?.metadata?.message || 'Ready to compare'}</div>
     <div className="flex flex-1 items-center justify-center">
       <MiniArrayView
@@ -475,7 +475,7 @@ const MetricsSummary = ({
       isLeader ? 'border-emerald-400/40 bg-emerald-500/8' : 'border-surface bg-background/35'
     )}
   >
-    <div className="mb-2 text-xs font-bold uppercase tracking-wider text-white">{label}</div>
+    <div className="mb-2 text-xs font-bold uppercase tracking-wider text-text-primary">{label}</div>
     <div className="grid grid-cols-4 gap-2 text-center text-[11px]">
       <MetricPill label="Steps" value={metrics.steps} />
       <MetricPill label="Compares" value={metrics.comparisons} />
@@ -488,6 +488,6 @@ const MetricsSummary = ({
 const MetricPill = ({ label, value }: { label: string; value: number }) => (
   <div className="rounded-lg bg-panel/60 px-2 py-2">
     <div className="text-[9px] uppercase tracking-wider text-text-secondary">{label}</div>
-    <div className="mt-0.5 font-mono text-sm font-bold text-white">{value}</div>
+    <div className="mt-0.5 font-mono text-sm font-bold text-text-primary">{value}</div>
   </div>
 );

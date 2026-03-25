@@ -12,7 +12,7 @@ interface CodeSyncPanelProps {
 }
 
 export const CodeSyncPanel = React.memo(({ algorithmId }: CodeSyncPanelProps) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const { getCurrentState } = useExecutionStore();
   const currentState = getCurrentState();
   const definition = getAlgorithmDefinition(algorithmId);
@@ -35,8 +35,8 @@ export const CodeSyncPanel = React.memo(({ algorithmId }: CodeSyncPanelProps) =>
   return (
     <Card className="bg-surface/30">
       <CardHeader className="flex flex-row items-center gap-2 border-b border-surface/50 py-2 px-3">
-        <Code2 className="w-3.5 h-3.5 text-cyan-400" />
-        <CardTitle className="text-xs font-medium">Code Sync</CardTitle>
+        <Code2 className="w-3.5 h-3.5 text-brand" />
+        <CardTitle className="text-xs font-medium text-text-primary">Code Sync</CardTitle>
         <span className="ml-auto text-[10px] text-text-secondary">
           {activeLine !== null ? `Line ${activeLine + 1}` : 'Waiting for execution'}
         </span>
@@ -72,11 +72,11 @@ export const CodeSyncPanel = React.memo(({ algorithmId }: CodeSyncPanelProps) =>
                       className={clsx(
                         'border-l-2 px-3 py-1 whitespace-pre transition-colors',
                         isHighlighted
-                          ? 'border-cyan-400 bg-cyan-500/12 text-cyan-100'
-                          : 'border-transparent text-slate-300'
+                          ? 'border-brand bg-brand/10 text-brand dark:text-brand-light'
+                          : 'border-transparent text-text-secondary dark:text-slate-300'
                       )}
                     >
-                      <span className="mr-3 inline-block w-6 select-none text-right text-slate-500">
+                      <span className="mr-3 inline-block w-6 select-none text-right text-text-secondary/50 dark:text-slate-500">
                         {index + 1}
                       </span>
                       {line}

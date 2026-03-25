@@ -30,7 +30,7 @@ export const LandingPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-6xl md:text-7xl font-extrabold tracking-tight text-white leading-tight"
+            className="text-6xl md:text-7xl font-extrabold tracking-tight text-text-primary leading-tight"
           >
             Stop Memorizing Algorithms.<br/>
             <span className="bg-gradient-to-r from-brand-light to-brand bg-clip-text text-transparent">
@@ -72,7 +72,7 @@ export const LandingPage = () => {
             <div className="w-12 h-12 rounded-xl bg-red-900/30 text-red-400 flex items-center justify-center border border-red-900">
               <Binary className="w-6 h-6" />
             </div>
-            <h2 className="text-3xl font-bold text-white">The Problem with Traditional Learning</h2>
+            <h2 className="text-3xl font-bold text-text-primary">The Problem with Traditional Learning</h2>
             <p className="text-text-secondary text-lg leading-relaxed">
               Students struggle with Data Structures & Algorithms because learning is inherently passive. Tracing recursion trees, complex graph traversals, and dynamic programming tables on paper falls apart when edge cases strike. 
             </p>
@@ -87,7 +87,7 @@ export const LandingPage = () => {
              <div className="w-12 h-12 rounded-xl bg-green-900/30 text-green-400 flex items-center justify-center border border-green-900">
               <Server className="w-6 h-6" />
             </div>
-            <h2 className="text-3xl font-bold text-white">The AlgoVision Approach</h2>
+            <h2 className="text-3xl font-bold text-text-primary">The AlgoVision Approach</h2>
             <p className="text-text-secondary text-lg leading-relaxed">
               We provide time-travel debugging, semantic code-to-visual linking, and high FPS animations allowing you to literally see the algorithm "think." Pause, edit the input, and watch the execution adapt synchronously.
             </p>
@@ -97,7 +97,7 @@ export const LandingPage = () => {
         {/* Features Highlights */}
         <section className="w-full mb-32">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl font-bold text-white">Production-Grade Features</h2>
+            <h2 className="text-4xl font-bold text-text-primary">Production-Grade Features</h2>
             <p className="text-text-secondary text-lg">Everything you need to deeply analyze algorithms.</p>
           </div>
           
@@ -133,7 +133,7 @@ export const LandingPage = () => {
       <footer className="w-full border-t border-surface py-8">
         <div className="container mx-auto px-6 flex items-center justify-between text-sm text-text-secondary">
           <p>© 2026 AlgoVision. Built for optimal learning.</p>
-          <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-white transition-colors">
+          <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-text-primary transition-colors">
             Source Code
           </a>
         </div>

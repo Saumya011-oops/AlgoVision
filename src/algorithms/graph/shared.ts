@@ -12,7 +12,7 @@ export interface GraphEdge {
 }
 
 export interface GraphData {
-  algorithm: 'dijkstra' | 'bellman-ford' | 'bfs';
+  algorithm: 'dijkstra' | 'bellman-ford' | 'bfs' | 'dfs' | 'ucs' | 'dls' | 'iddfs' | 'bidirectional' | 'best-first' | 'a-star';
   nodes: GraphNode[];
   edges: GraphEdge[];
   distances: number[];

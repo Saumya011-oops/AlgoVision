@@ -35,7 +35,7 @@ export const DPTableRenderer = React.memo(() => {
     return (
       <div className="flex h-full w-full flex-col items-center justify-center gap-6 overflow-auto p-6">
         <div className="text-center">
-          <h3 className="mb-1 text-lg font-bold text-white">{label}</h3>
+          <h3 className="mb-1 text-lg font-bold text-text-primary">{label}</h3>
           <p className="text-sm text-text-secondary">{summary}</p>
         </div>
 
@@ -70,7 +70,7 @@ export const DPTableRenderer = React.memo(() => {
                         : isActiveCell(rowIndex, columnIndex) &&
                           state.operationType === OperationType.OVERWRITE
                         ? 'border-brand-light bg-brand/25 text-brand-light'
-                        : 'border-surface bg-background/50 text-white'
+                        : 'border-surface bg-background/50 text-text-primary'
                     )}
                   >
                     {value}
@@ -94,7 +94,7 @@ export const DPTableRenderer = React.memo(() => {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-6 p-6">
       <div className="text-center">
-        <h3 className="mb-1 text-lg font-bold text-white">{label} DP Table</h3>
+        <h3 className="mb-1 text-lg font-bold text-text-primary">{label} DP Table</h3>
         <p className="text-sm text-text-secondary">Bottom-up computation with reusable subproblems</p>
       </div>
 
@@ -121,7 +121,7 @@ export const DPTableRenderer = React.memo(() => {
                       : isActive && operationType === OperationType.OVERWRITE
                       ? 'scale-110 border-brand-light bg-brand/20 text-brand-light shadow-[0_0_20px_rgba(139,92,246,0.5)]'
                       : isFilled
-                      ? 'border-surface bg-surface/60 text-white'
+                      ? 'border-surface bg-surface/60 text-text-primary'
                       : 'border-surface/50 bg-surface/20 text-text-secondary/40'
                   )}
                 >

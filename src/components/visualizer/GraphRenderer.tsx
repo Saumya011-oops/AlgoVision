@@ -33,7 +33,7 @@ export const GraphRenderer = React.memo(() => {
   return (
     <div className="relative h-full w-full overflow-hidden">
       <div className="absolute left-4 top-4 z-20 flex flex-wrap gap-2">
-        <div className="rounded-full border border-surface bg-panel/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+        <div className="rounded-full border border-surface bg-panel/80 px-3 py-1 text-[10px] font-semibold uppercase tracking-wider text-text-primary">
           {algorithm.replace(/-/g, ' ')}
         </div>
         {typeof pass === 'number' ? (

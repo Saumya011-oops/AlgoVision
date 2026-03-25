@@ -63,7 +63,7 @@ export const SortingRenderer = React.memo(() => {
     if (isSortedLeft || isSortedRight) {
       return 'bg-emerald-500/15 border-emerald-400/60';
     }
-    return 'bg-slate-800/60 border-slate-600/40';
+    return 'bg-surface/60 border-surface-border/40';
   };
 
   const getTextColor = (idx: number) => {
@@ -79,7 +79,7 @@ export const SortingRenderer = React.memo(() => {
     if (isActive && operationType === OperationType.COMPARE) return 'text-yellow-200';
     if (isActive) return 'text-blue-200';
     if (isSortedLeft || isSortedRight) return 'text-emerald-300';
-    return 'text-white';
+    return 'text-text-primary';
   };
 
   const getIndicator = (idx: number) => {
@@ -99,10 +99,10 @@ export const SortingRenderer = React.memo(() => {
   return (
     <div className="w-full h-full flex flex-col overflow-hidden rounded-2xl">
       {/* Status bar */}
-      <div className="px-4 py-2.5 flex items-center gap-3 border-b border-slate-700/50 bg-slate-900/50 shrink-0">
+      <div className="px-4 py-2.5 flex items-center gap-3 border-b border-surface/50 bg-background/50 shrink-0">
         <span className="text-lg">{op.emoji}</span>
         <span className={clsx("font-bold text-xs uppercase tracking-wider", op.color)}>{op.label}</span>
-        <span className="text-white/70 text-xs flex-1 truncate">{msg}</span>
+        <span className="text-text-secondary text-xs flex-1 truncate">{msg}</span>
       </div>
 
       {/* Array visualization */}
@@ -140,14 +140,14 @@ export const SortingRenderer = React.memo(() => {
               </div>
 
               {/* Index */}
-              <span className="text-[9px] font-mono text-slate-600">{idx}</span>
+              <span className="text-[9px] font-mono text-text-secondary">{idx}</span>
             </motion.div>
           ))}
         </div>
       </div>
 
       {/* Legend */}
-      <div className="px-4 py-2 border-t border-slate-700/50 flex items-center justify-center gap-5 text-[10px] font-medium text-slate-400 shrink-0 bg-slate-900/30">
+      <div className="px-4 py-2 border-t border-surface/50 flex items-center justify-center gap-5 text-[10px] font-medium text-text-secondary shrink-0 bg-background/30">
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-yellow-500/40 border border-yellow-500"></span> Comparing</span>
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-orange-500/40 border border-orange-500"></span> Swapping</span>
         <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded bg-emerald-500/40 border border-emerald-500"></span> Sorted</span>
