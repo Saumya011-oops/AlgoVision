@@ -18,7 +18,8 @@ export const generateIDDFSStates = (source = 0, nodeCount = 6): AlgorithmResult<
     message: string,
     stack: number[],
     visited: boolean[],
-    path: number[] = []
+    path: number[] = [],
+    prevArr: Array<number | null> = []
   ) => {
     states.push({
       data: {
@@ -32,6 +33,7 @@ export const generateIDDFSStates = (source = 0, nodeCount = 6): AlgorithmResult<
         source,
         target,
         queue: [...stack],
+        parent: [...prevArr],
       },
       activeIndices,
       operationType,
@@ -51,17 +53,17 @@ export const generateIDDFSStates = (source = 0, nodeCount = 6): AlgorithmResult<
     // Convert set to array for rendering
     const getVisArr = () => nodes.map(n => visitedSet.has(n.id));
 
-    record(OperationType.VISIT, source, [source], `Starting iteration with limit = ${limit}`, [source], getVisArr());
+    record(OperationType.VISIT, source, [source], `Starting iteration with limit = ${limit}`, [source], getVisArr(), [], prev);
 
     while (stack.length > 0) {
       const { node, depth } = stack.pop()!;
       visitedSet.add(node);
-      
-      record(OperationType.VISIT, node, [node], `Visiting ${nodes[node].label} (depth ${depth})`, stack.map(s => s.node), getVisArr());
+
+      record(OperationType.VISIT, node, [node], `Visiting ${nodes[node].label} (depth ${depth})`, stack.map(s => s.node), getVisArr(), [], prev);
 
       if (node === target) {
         const path = buildPathFromPrev(prev, target);
-        record(OperationType.DONE, node, path, `Target ${nodes[target].label} reached!`, [], getVisArr(), path);
+        record(OperationType.DONE, node, path, `Target ${nodes[target].label} reached!`, [], getVisArr(), path, prev);
         return true;
       }
 
@@ -71,7 +73,7 @@ export const generateIDDFSStates = (source = 0, nodeCount = 6): AlgorithmResult<
           if (!visitedSet.has(neighbor)) {
             if (prev[neighbor] === null) prev[neighbor] = node;
             stack.push({ node: neighbor, depth: depth + 1 });
-            record(OperationType.OVERWRITE, neighbor, [neighbor], `Pushed ${nodes[neighbor].label}`, stack.map(s => s.node), getVisArr());
+            record(OperationType.OVERWRITE, neighbor, [neighbor], `Pushed ${nodes[neighbor].label}`, stack.map(s => s.node), getVisArr(), [], prev);
           }
         }
       }

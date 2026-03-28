@@ -30,6 +30,7 @@ export const generateDijkstraStates = (source = 0, nodeCount = 6): AlgorithmResu
         path: [...path],
         source,
         target,
+        parent: [...prev],
       },
       activeIndices,
       operationType,

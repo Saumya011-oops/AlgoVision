@@ -33,6 +33,7 @@ export const generateUCSStates = (source = 0, nodeCount = 6): AlgorithmResult<Gr
         source,
         target,
         queue: pq.map(i => i.node), // visual queue representation
+        parent: [...prev],
       },
       activeIndices,
       operationType,

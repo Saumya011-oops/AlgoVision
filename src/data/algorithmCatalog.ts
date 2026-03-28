@@ -931,6 +931,20 @@ export const COMPARISON_SORTING_ALGOS = definitions
   .filter((definition) => definition.category === 'sorting')
   .map(({ id, name }) => ({ id, name }));
 
+export const COMPARISON_GRAPH_ALGOS = definitions
+  .filter(d => d.category === 'graph')
+  .map(({ id, name }) => ({ id, name }));
+
+export const COMPARISON_TREE_ALGOS = definitions
+  .filter(d => d.category === 'tree')
+  .map(({ id, name }) => ({ id, name }));
+
+export const ALL_COMPARISON_ALGOS = [
+  ...definitions.filter(d => d.category === 'sorting').map(({ id, name }) => ({ id, name, group: 'Sorting' })),
+  ...definitions.filter(d => d.category === 'tree').map(({ id, name }) => ({ id, name, group: 'Tree' })),
+  ...definitions.filter(d => d.category === 'graph').map(({ id, name }) => ({ id, name, group: 'Graph' })),
+];
+
 export const getAlgorithmDefinition = (algorithmId: string) =>
   ALGORITHM_DEFINITIONS[algorithmId] ?? ALGORITHM_DEFINITIONS['quick-sort'];
 

@@ -38,6 +38,7 @@ export const generateDFSStates = (source = 0, nodeCount = 6): AlgorithmResult<Gr
         source,
         target,
         queue: [...stack], // reusing queue field for stack
+        parent: [...prev],
       },
       activeIndices,
       operationType,

@@ -39,6 +39,7 @@ export const generateBFSStates = (source = 0, nodeCount = 6): AlgorithmResult<Gr
         source,
         target,
         queue: [...queue],
+        parent: [...prev],
       },
       activeIndices,
       operationType,

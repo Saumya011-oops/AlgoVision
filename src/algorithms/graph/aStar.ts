@@ -17,6 +17,8 @@ export const generateAStarStates = (source = 0, nodeCount = 6): AlgorithmResult<
     return Math.sqrt(dx * dx + dy * dy) / 40; 
   };
 
+  const allHeuristics = nodes.map((_, i) => Math.round(heuristic(i)));
+
   const pq: { node: number; f: number; g: number; h: number }[] = [
     { node: source, g: 0, h: heuristic(source), f: heuristic(source) }
   ];
@@ -42,6 +44,8 @@ export const generateAStarStates = (source = 0, nodeCount = 6): AlgorithmResult<
         source,
         target,
         queue: pq.map(i => i.node),
+        parent: [...prev],
+        heuristics: [...allHeuristics],
       },
       activeIndices,
       operationType,

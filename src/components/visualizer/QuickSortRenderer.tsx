@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useExecutionStore } from '../../store/executionStore';
 import { OperationType } from '../../types/AlgorithmState';
+import { VisualizationStateContext } from '../../contexts/VisualizationStateContext';
 import clsx from 'clsx';
 
 /*
@@ -27,8 +28,9 @@ interface QuickSortTreeData {
 }
 
 export const QuickSortRenderer = React.memo(() => {
+  const ctx = React.useContext(VisualizationStateContext);
   const { getCurrentState } = useExecutionStore();
-  const state = getCurrentState();
+  const state = ctx ? ctx.getCurrentState() : getCurrentState();
 
   if (!state || !state.data || !(state.data as QuickSortTreeData).rows) return null;
 

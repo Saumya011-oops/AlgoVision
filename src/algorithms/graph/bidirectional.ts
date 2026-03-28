@@ -13,9 +13,10 @@ export const generateBidirectionalStates = (source = 0, nodeCount = 6): Algorith
 
   const fwdQueue: number[] = [source];
   const bwdQueue: number[] = [target];
-  
+
   const fwdVisited = new Set([source]);
   const bwdVisited = new Set([target]);
+  const prevForward: Array<number | null> = Array(nodes.length).fill(null);
 
   const states: AlgorithmState<GraphData>[] = [];
   let step = 0;
@@ -48,6 +49,7 @@ export const generateBidirectionalStates = (source = 0, nodeCount = 6): Algorith
         source,
         target,
         queue: [...fwdQueue, ...bwdQueue],
+        parent: [...prevForward],
       },
       activeIndices,
       operationType,
@@ -77,6 +79,7 @@ export const generateBidirectionalStates = (source = 0, nodeCount = 6): Algorith
       }
       if (!fwdVisited.has(neighbor)) {
         fwdVisited.add(neighbor);
+        prevForward[neighbor] = fNode;
         fwdQueue.push(neighbor);
         record(OperationType.OVERWRITE, neighbor, [neighbor], `[Forward] Enqueued ${nodes[neighbor].label}`);
       }

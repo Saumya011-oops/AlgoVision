@@ -1,13 +1,16 @@
 import React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { DPTableRenderer } from './DPTableRenderer';
-import { GraphRenderer } from './GraphRenderer';
+import { SearchTreeRenderer } from './SearchTreeRenderer';
+import { HeapSortRenderer } from './HeapSortRenderer';
 import { KMPRenderer } from './KMPRenderer';
 import { MergeSortRenderer } from './MergeSortRenderer';
 import { QuickSortRenderer } from './QuickSortRenderer';
 import { SortingRenderer } from './SortingRenderer';
+import { TreeRenderer } from './TreeRenderer';
 
-const genericSortingAlgorithms = ['bubble-sort', 'selection-sort', 'heap-sort'];
+const genericSortingAlgorithms = ['bubble-sort', 'selection-sort'];
+const treeAlgorithms = ['bst-insert', 'preorder', 'inorder', 'postorder'];
 const graphAlgorithms = ['dijkstra', 'bellman-ford', 'bfs', 'dfs', 'ucs', 'dls', 'iddfs', 'bidirectional', 'best-first', 'a-star'];
 const dynamicProgrammingAlgorithms = ['fibonacci-dp', 'knapsack-01', 'lcs'];
 const stringAlgorithms = ['kmp', 'rabin-karp'];
@@ -25,10 +28,14 @@ export const Canvas = React.memo(() => {
           <QuickSortRenderer />
         ) : algorithmId === 'merge-sort' ? (
           <MergeSortRenderer />
+        ) : algorithmId === 'heap-sort' ? (
+          <HeapSortRenderer />
+        ) : treeAlgorithms.includes(algorithmId) ? (
+          <TreeRenderer />
         ) : genericSortingAlgorithms.includes(algorithmId) ? (
           <SortingRenderer />
         ) : graphAlgorithms.includes(algorithmId) ? (
-          <GraphRenderer />
+          <SearchTreeRenderer />
         ) : dynamicProgrammingAlgorithms.includes(algorithmId) ? (
           <DPTableRenderer />
         ) : stringAlgorithms.includes(algorithmId) ? (

@@ -49,12 +49,14 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
     const targetNodeId = i;
     const finalCoords = buildNode(targetNodeId);
     
+    const insertQueue = values.slice(i);
+
     // Begin insertion
     if (root === null) {
       root = targetNodeId;
       currentNodes.push(finalCoords);
       states.push({
-        data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: root, visited: [], path: [] },
+        data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: root, visited: [], path: [], insertQueue: [...insertQueue] },
         activeIndices: [root],
         operationType: OperationType.OVERWRITE,
         metadata: { message: `Placing root node with value ${val}`, stepNumber: states.length }
@@ -64,11 +66,11 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
 
     let curr = root;
     const path: number[] = [];
-    
+
     while (true) {
       path.push(curr);
       states.push({
-        data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: curr, visited: [], path: [...path] },
+        data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: curr, visited: [], path: [...path], insertQueue: [...insertQueue] },
         activeIndices: [curr],
         operationType: OperationType.COMPARE,
         metadata: { message: `Comparing ${val} with ${currentNodes[curr].value}`, stepNumber: states.length }
@@ -81,7 +83,7 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
           currentNodes.push(finalCoords);
           path.push(targetNodeId);
           states.push({
-            data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: targetNodeId, visited: [], path },
+            data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: targetNodeId, visited: [], path, insertQueue: [...insertQueue] },
             activeIndices: [targetNodeId],
             operationType: OperationType.OVERWRITE,
             metadata: { message: `${val} is smaller, placing as left child of ${parent.value}`, stepNumber: states.length }
@@ -90,7 +92,7 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
         }
         curr = parent.left;
         states.push({
-          data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: curr, visited: [], path: [...path, curr] },
+          data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: curr, visited: [], path: [...path, curr], insertQueue: [...insertQueue] },
           activeIndices: [curr],
           operationType: OperationType.VISIT,
           metadata: { message: `Traversing left child.`, stepNumber: states.length }
@@ -101,7 +103,7 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
           currentNodes.push(finalCoords);
           path.push(targetNodeId);
           states.push({
-            data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: targetNodeId, visited: [], path },
+            data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: targetNodeId, visited: [], path, insertQueue: [...insertQueue] },
             activeIndices: [targetNodeId],
             operationType: OperationType.OVERWRITE,
             metadata: { message: `${val} is greater or equal, placing as right child of ${parent.value}`, stepNumber: states.length }
@@ -110,7 +112,7 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
         }
         curr = parent.right;
         states.push({
-          data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: curr, visited: [], path: [...path, curr] },
+          data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: curr, visited: [], path: [...path, curr], insertQueue: [...insertQueue] },
           activeIndices: [curr],
           operationType: OperationType.VISIT,
           metadata: { message: `Traversing right child.`, stepNumber: states.length }
@@ -120,7 +122,7 @@ export const generateBSTInsertStates = (values: number[]): AlgorithmResult<TreeD
   }
 
   states.push({
-    data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: null, visited: [], path: [] },
+    data: { algorithm: 'bst-insert', nodes: JSON.parse(JSON.stringify(currentNodes)), root, current: null, visited: [], path: [], insertQueue: [] },
     activeIndices: [],
     operationType: OperationType.DONE,
     metadata: { message: 'Binary Search Tree constructed.', stepNumber: states.length }

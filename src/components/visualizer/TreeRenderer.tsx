@@ -3,16 +3,18 @@ import clsx from 'clsx';
 import { useExecutionStore } from '../../store/executionStore';
 import { OperationType } from '../../types/AlgorithmState';
 import { TreeData } from '../../algorithms/tree/shared';
+import { VisualizationStateContext } from '../../contexts/VisualizationStateContext';
 
 export const TreeRenderer = React.memo(() => {
+  const ctx = React.useContext(VisualizationStateContext);
   const { getCurrentState } = useExecutionStore();
-  const state = getCurrentState();
+  const state = ctx ? ctx.getCurrentState() : getCurrentState();
 
   if (!state || !state.data || !(state.data as TreeData).nodes) {
     return null;
   }
 
-  const { nodes, root, current, visited, path, algorithm } = state.data as TreeData;
+  const { nodes, root, current, visited, path, algorithm, insertQueue } = state.data as TreeData;
   const { activeIndices, operationType } = state;
 
   const isNodeOnPath = (nodeId: number) => path.includes(nodeId);
@@ -24,6 +26,19 @@ export const TreeRenderer = React.memo(() => {
           {algorithm.replace(/-/g, ' ')}
         </div>
       </div>
+
+      {algorithm === 'bst-insert' && insertQueue && (
+        <div className="absolute top-4 right-4 z-20 flex flex-col items-end gap-1">
+          <div className="text-[10px] font-semibold uppercase tracking-wider text-text-secondary">To Insert</div>
+          <div className="flex gap-1 flex-wrap justify-end">
+            {insertQueue.map((val, idx) => (
+              <span key={idx} className={`px-2 py-0.5 rounded font-mono text-xs font-bold border ${idx === 0 ? 'bg-violet-900/50 border-violet-500 text-violet-200' : 'bg-surface/50 border-surface text-text-secondary'}`}>
+                {val}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <svg className="h-full w-full" viewBox="0 0 700 420" preserveAspectRatio="xMidYMid meet">
         {/* Draw edges first so they appear behind nodes */}

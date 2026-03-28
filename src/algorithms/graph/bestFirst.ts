@@ -36,6 +36,7 @@ export const generateBestFirstStates = (source = 0, nodeCount = 6): AlgorithmRes
         source,
         target,
         queue: pq.map(i => i.node),
+        parent: [...prev],
       },
       activeIndices,
       operationType,

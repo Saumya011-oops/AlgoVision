@@ -32,6 +32,7 @@ export const generateBellmanFordStates = (source = 0, nodeCount = 6): AlgorithmR
         source,
         target,
         pass,
+        parent: [...prev],
       },
       activeIndices,
       operationType,

@@ -36,6 +36,7 @@ export const generateDLSStates = (source = 0, nodeCount = 6, limit = 2): Algorit
         source,
         target,
         queue: stack.map(s => s.node),
+        parent: [...prev],
       },
       activeIndices,
       operationType,

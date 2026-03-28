@@ -23,50 +23,63 @@ export interface GraphData {
   target: number;
   queue?: number[];
   pass?: number;
+  parent?: (number | null)[];
+  heuristics?: number[];
 }
 
-export const generateRandomGraph = (nodeCount = 6): { nodes: GraphNode[]; edges: GraphEdge[] } => {
+export const generateRandomGraph = (nodeCount = 7): { nodes: GraphNode[]; edges: GraphEdge[] } => {
   const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const nodes: GraphNode[] = [];
-  const columns = Math.ceil(nodeCount / 2);
-
-  for (let index = 0; index < nodeCount; index++) {
-    const row = index < columns ? 0 : 1;
-    const col = index < columns ? index : index - columns;
-    nodes.push({
-      id: index,
-      x: 90 + col * (500 / Math.max(columns - 1, 1)),
-      y: row === 0 ? 110 : 290,
-      label: labels[index] ?? `N${index}`,
-    });
-  }
-
   const edges: GraphEdge[] = [];
-  const edgeKey = (from: number, to: number) => `${from}-${to}`;
-  const seen = new Set<string>();
 
-  const addEdge = (from: number, to: number, weight = Math.floor(Math.random() * 9) + 1) => {
-    const key = edgeKey(from, to);
-    if (from === to || seen.has(key)) {
-      return;
-    }
+  // Node 0 is the root
+  nodes.push({ id: 0, x: 0, y: 0, label: labels[0] });
 
-    seen.add(key);
-    edges.push({ from, to, weight });
-  };
-
-  for (let index = 0; index < nodeCount - 1; index++) {
-    addEdge(index, index + 1);
+  // Each subsequent node connects to a random existing node (creates a random tree)
+  for (let i = 1; i < nodeCount; i++) {
+    const parentIdx = Math.floor(Math.random() * i);
+    nodes.push({ id: i, x: 0, y: 0, label: labels[i] ?? `N${i}` });
+    edges.push({ from: parentIdx, to: i, weight: Math.floor(Math.random() * 9) + 1 });
   }
 
-  const extraEdges = Math.max(2, Math.floor(nodeCount * 1.1));
-  for (let count = 0; count < extraEdges; count++) {
-    const from = Math.floor(Math.random() * nodeCount);
-    let to = Math.floor(Math.random() * nodeCount);
-    if (from === to) {
-      to = (to + 1) % nodeCount;
+  // Build children map for tree layout
+  const children: number[][] = Array.from({ length: nodeCount }, () => []);
+  for (const edge of edges) {
+    children[edge.from].push(edge.to);
+  }
+
+  // BFS to compute level and position-within-level for each node
+  const nodeLevel: number[] = Array(nodeCount).fill(0);
+  const posInLevel: number[] = Array(nodeCount).fill(0);
+  const levelSizes: number[] = [];
+  const bfsQueue: number[] = [0];
+  const seen = new Set<number>([0]);
+
+  while (bfsQueue.length > 0) {
+    const node = bfsQueue.shift()!;
+    const lv = nodeLevel[node];
+    if (levelSizes[lv] === undefined) levelSizes[lv] = 0;
+    posInLevel[node] = levelSizes[lv]++;
+    for (const child of children[node]) {
+      if (!seen.has(child)) {
+        seen.add(child);
+        nodeLevel[child] = lv + 1;
+        bfsQueue.push(child);
+      }
     }
-    addEdge(from, to);
+  }
+
+  // Assign x, y positions in a hierarchical tree layout
+  const viewW = 660;
+  const numLevels = levelSizes.length;
+  const levelHeight = Math.min(90, Math.floor(400 / Math.max(numLevels, 2)));
+  const startY = 60;
+
+  for (let i = 0; i < nodeCount; i++) {
+    const lv = nodeLevel[i];
+    const count = levelSizes[lv];
+    nodes[i].x = (viewW / (count + 1)) * (posInLevel[i] + 1);
+    nodes[i].y = startY + lv * levelHeight;
   }
 
   return { nodes, edges };

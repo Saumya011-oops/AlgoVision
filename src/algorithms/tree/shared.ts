@@ -14,6 +14,7 @@ export interface TreeData {
   current: number | null;
   visited: number[];
   path: number[];
+  insertQueue?: number[];
 }
 
 export const generateRandomBST = (size = 10): { nodes: TreeNode[]; root: number | null } => {
